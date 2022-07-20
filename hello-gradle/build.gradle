@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+}
+
+task demo {
+    println 'Demo Gradle'
+}
+
+group 'guru.springframework'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.apache.commons:commons-lang3:3.12.0')
+}
+
+test {
+    useJUnitPlatform()
+}
+jar {
+    manifest {
+        attributes "Main-Class": "HelloWorld"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'HelloWorld'
+    }
+    baseName = 'all-in-one-jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
